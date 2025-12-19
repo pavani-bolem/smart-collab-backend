@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
+app.use(express.json()); // Allows us to read JSON from the body
 const PORT = process.env.PORT || 3000;
+
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
     res.send('Smart Collab API is Running!');
