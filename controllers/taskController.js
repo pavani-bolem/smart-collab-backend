@@ -1,24 +1,52 @@
+const axios = require('axios');
 const Task = require('../models/Task');
 
 // 1. Create a new Task
 exports.createTask = async (req, res) => {
     try {
-        // FIX: Add default values (= null) to prevent "undefined" errors
         const { 
             title, 
-            description = null,   // If missing, use null
-            status = 'todo',      // If missing, use 'todo'
-            priority = 'medium'   // If missing, use 'medium'
+            description = null, 
+            status = 'todo', 
+            priority  // We removed the default value here to check if user sent it
         } = req.body;
 
         const userId = req.user.id; 
 
         if (!title) return res.status(400).json({ message: 'Title is required' });
 
-        // Now these variables are guaranteed to be safe for MySQL
-        const taskId = await Task.create(title, description, status, priority, userId);
-        
-        res.status(201).json({ message: 'Task created', taskId });
+        // --- AI INTEGRATION START ---
+        // If user didn't provide a priority, let AI decide based on description
+        let finalPriority = priority || 'medium'; // Default to medium if AI fails
+
+        if (!priority && description) {
+            try {
+                // Call the Python Microservice
+                const aiResponse = await axios.post('http://localhost:5000/predict', {
+                    description: description
+                });
+
+                // If AI gives a priority, use it!
+                if (aiResponse.data.priority) {
+                    finalPriority = aiResponse.data.priority;
+                    console.log(`🤖 AI decided priority: ${finalPriority}`);
+                }
+            } catch (error) {
+                console.error("⚠️ AI Service is offline. Using default priority.");
+                // We don't crash the app; we just use the default 'medium'
+            }
+        }
+        // --- AI INTEGRATION END ---
+
+        const taskId = await Task.create(title, description, status, finalPriority, userId);
+
+        // Return the AI's decision to the user so they can see the magic
+        res.status(201).json({ 
+            message: 'Task created', 
+            taskId, 
+            priority: finalPriority 
+        });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
