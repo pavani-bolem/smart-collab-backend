@@ -10,6 +10,7 @@ Smart-Collab is a full-stack enterprise task manager that uses **Artificial Inte
 * **Scalable Backend:** Built with Express.js and MySQL (Relational Data Model).
 
 ## 🛠️ Tech Stack
+* **Frontend:** HTML5, CSS3, Vanilla JavaScript (Single Page Application)
 * **Core Backend:** Node.js, Express.js
 * **AI Service:** Python, Flask, TextBlob
 * **Database:** MySQL
@@ -17,10 +18,10 @@ Smart-Collab is a full-stack enterprise task manager that uses **Artificial Inte
 * **DevOps:** Git, GitHub Projects (Kanban)
 
 ## 🏗️ Architecture
-**User** -> [ **Node.js API** ] <--> [ **MySQL Database** ]
-                  |
-                  v
-           [ **Python AI Service** ]
+[ **Web Browser (UI)** ] <--> [ **Node.js API** ] <--> [ **MySQL Database** ]
+                                      |
+                                      v
+                               [ **Python AI Service** ]
 
 ## ⚙️ Installation & Setup
 
@@ -60,6 +61,10 @@ pip install -r requirements.txt
 python app.py
 ```
 
+### 3. Access the Application
+Once both servers are running, open your browser and visit:
+http://localhost:3000
+
 ## 🔌 API Endpoints
 
 | Method | Endpoint | Description |
@@ -68,5 +73,5 @@ python app.py
 | `POST` | `/api/auth/login` | Login and receive JWT |
 | `GET` | `/api/tasks` | Fetch all user-specific tasks |
 | `POST` | `/api/tasks` | Create task (Triggers AI Priority Check) |
-| `PUT` | `/api/tasks/:id` | Update a task (e.g., change status) |
+| `PUT` | `/api/tasks/:id` | Update a task (e.g., change status)(AI re-evaluates priority if description changes) |
 | `DELETE` | `/api/tasks/:id` | Delete a task permanently |
