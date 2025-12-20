@@ -6,6 +6,9 @@ const PORT = process.env.PORT || 3000;
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const taskRoutes = require('./routes/taskRoutes');
+app.use('/api/tasks', taskRoutes);
+
 app.get('/', (req, res) => {
     res.send('Smart Collab API is Running!');
 });
