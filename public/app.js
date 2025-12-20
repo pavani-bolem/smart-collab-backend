@@ -87,6 +87,9 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 // Register
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    // 1. Get the Name (Username) value
+    const username = document.getElementById('regName').value; // <--- Add this line
     const email = document.getElementById('regEmail').value;
     const password = document.getElementById('regPassword').value;
 
@@ -94,7 +97,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const res = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            // 2. Send 'username' in the body
+            body: JSON.stringify({ username, email, password }) // <--- Add username here
         });
         
         if (res.ok) {
