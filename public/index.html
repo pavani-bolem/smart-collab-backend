@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart-Collab | AI Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <h2>Smart-Collab 🤖</h2>
+        <button id="logoutBtn" style="display: none;">Logout</button>
+    </nav>
+
+    <div class="container">
+        
+        <section id="loginSection">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>No account? <a href="#" id="showRegister">Register here</a></p>
+        </section>
+
+        <section id="registerSection" class="hidden">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="password" id="regPassword" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p>Have an account? <a href="#" id="showLogin">Login here</a></p>
+        </section>
+
+        <section id="dashboardSection" class="hidden">
+            <div class="task-input">
+                <h3>Create New Task</h3>
+                <input type="text" id="taskTitle" placeholder="Task Title" required>
+                <input type="text" id="taskDesc" placeholder="Description (AI will auto-prioritize this!)">
+                <button id="createTaskBtn">Add Task ✨</button>
+            </div>
+
+            <h3>My Tasks</h3>
+            <ul id="taskList">
+                </ul>
+        </section>
+
+        <section id="updateSection" class="hidden">
+            <h2>Update Task</h2>
+            <form id="updateForm">
+                <input type="hidden" id="updateTaskId"> <label>Task Title:</label>
+                <input type="text" id="updateTitle" required>
+
+                <label>Description (AI will re-check):</label>
+                <input type="text" id="updateDesc" required>
+
+                <label>Status:</label>
+                <select id="updateStatus" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                    <option value="todo">To Do</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="done">Done</option>
+                </select>
+
+                <button type="submit">Save Changes 💾</button>
+                <button type="button" id="cancelUpdate" style="background: #666; margin-top: 10px;">Cancel</button>
+            </form>
+        </section>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
