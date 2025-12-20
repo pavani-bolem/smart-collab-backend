@@ -1,4 +1,5 @@
 const axios = require('axios');
+const db = require('../config/db');
 const Task = require('../models/Task');
 
 // 1. Create a new Task
@@ -69,11 +70,50 @@ exports.getTasks = async (req, res) => {
 exports.updateTask = async (req, res) => {
     try {
         const { id } = req.params;
-        const affectedRows = await Task.update(id, req.body);
-        
-        if (affectedRows === 0) return res.status(404).json({ message: 'Task not found' });
-        
+        const userId = req.user.id;
+        const { title, description, status } = req.body;
+
+        // --- NEW: VALIDATION CHECK ---
+        // If user sent a status, make sure it is one of the allowed words
+        const validStatuses = ['todo', 'in_progress', 'done'];
+        if (status && !validStatuses.includes(status)) {
+            return res.status(400).json({ 
+                message: 'Invalid status. Allowed values: todo, in_progress, done' 
+            });
+        }
+        // -----------------------------
+
+        // 1. Get Existing Task
+        const [tasks] = await db.execute('SELECT * FROM tasks WHERE id = ? AND assigned_to = ?', [id, userId]);
+
+        if (tasks.length === 0) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        const existingTask = tasks[0];
+
+        // 2. Prepare Values
+        let newTitle = title || existingTask.title;
+        let newDescription = description || existingTask.description;
+        let newStatus = status || existingTask.status;
+        let newPriority = existingTask.priority; 
+
+        // 3. AI Check
+        if (description && description !== existingTask.description) {
+            try {
+                const aiResponse = await axios.post('http://localhost:5000/predict', { description: newDescription });
+                if (aiResponse.data.priority) newPriority = aiResponse.data.priority;
+            } catch (error) {
+                console.log("AI Service offline.");
+            }
+        }
+
+        // 4. Update Database
+        const updateQuery = `UPDATE tasks SET title=?, description=?, status=?, priority=? WHERE id=? AND assigned_to=?`;
+        await db.execute(updateQuery, [newTitle, newDescription, newStatus, newPriority, id, userId]);
+
         res.json({ message: 'Task updated successfully' });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
