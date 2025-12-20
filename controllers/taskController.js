@@ -23,7 +23,7 @@ exports.createTask = async (req, res) => {
         if (!priority && description) {
             try {
                 // Call the Python Microservice
-                const aiResponse = await axios.post('http://localhost:5000/predict', {
+                const aiResponse = await axios.post(`${AI_URL}/predict`, {
                     description: description
                 });
 
@@ -101,7 +101,7 @@ exports.updateTask = async (req, res) => {
         // 3. AI Check
         if (description && description !== existingTask.description) {
             try {
-                const aiResponse = await axios.post('http://localhost:5000/predict', { description: newDescription });
+                const aiResponse = await axios.post(`${AI_URL}/predict`, { description: newDescription });
                 if (aiResponse.data.priority) newPriority = aiResponse.data.priority;
             } catch (error) {
                 console.log("AI Service offline.");
