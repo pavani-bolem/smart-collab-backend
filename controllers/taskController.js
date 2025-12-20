@@ -1,6 +1,7 @@
 const axios = require('axios');
 const db = require('../config/db');
 const Task = require('../models/Task');
+const AI_URL = process.env.AI_SERVICE_URL || 'http://localhost:5000';
 
 // 1. Create a new Task
 exports.createTask = async (req, res) => {
